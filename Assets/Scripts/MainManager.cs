@@ -39,7 +39,7 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
-        DisplayBestResult();
+        DisplayBestResult(); // Update best result
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -71,17 +71,17 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
-        SetHighScore(m_Points);
+        SetHighScore(m_Points); //Pass current score to SetHighScore() method
         GameOverScreen.SetActive(true);
     }
 
-    public void LoadMenuScene()
+    public void LoadMenuScene() // Method for loading Menu scene
     {
         SceneManager.LoadScene(0);
     }
 
-    void SetHighScore(int score)
-    {
+    void SetHighScore(int score) // Method, that receives a score and checks if it is higher
+    {                            // than our Singleton's highScore. If it is, update highScore
         if (DataManager.INSTANCE != null)
         {
             if (score > DataManager.INSTANCE.highScore)
@@ -91,7 +91,7 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    void DisplayBestResult()
+    void DisplayBestResult() // Method for displaying the message and highScore on screen
     {
         if (DataManager.INSTANCE != null)
         {
