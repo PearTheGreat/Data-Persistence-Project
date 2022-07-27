@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class DataManager : MonoBehaviour
 {
@@ -8,8 +7,9 @@ public class DataManager : MonoBehaviour
     
     public int highScore;    
     public string playerName;
+    public float musicVolume;
 
-    private MainMenuUIHandler uiHandler;
+    public AudioSource audioSource;
 
     private void Awake()
     {
@@ -26,15 +26,46 @@ public class DataManager : MonoBehaviour
 
     private void Start()
     {
-        uiHandler = GameObject.Find("MainMenuUIHandler").GetComponent<MainMenuUIHandler>();
-        print(highScore);
+        audioSource = GetComponent<AudioSource>();
+        LoadData();
     }
 
     private void Update()
     {
-        if (uiHandler != null)
+    }
+
+    [System.Serializable]
+    class SaveDataAndSettings
+    {
+        public int highScore;
+        public float musicVolume;
+    }
+
+    public void SaveData()
+    {
+        SaveDataAndSettings data = new SaveDataAndSettings();
+        data.highScore = highScore;
+        data.musicVolume = musicVolume;
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    public void LoadData()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
         {
-            playerName = uiHandler.GetPlayerName();
+            string json = File.ReadAllText(path);
+            SaveDataAndSettings data = JsonUtility.FromJson<SaveDataAndSettings>(json);
+
+            highScore = data.highScore;
+            musicVolume = data.musicVolume;
+
+            //Music Related
+            
+            audioSource.volume = musicVolume;
         }
     }
 }

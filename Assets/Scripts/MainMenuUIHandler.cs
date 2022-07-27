@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,12 +10,19 @@ public class MainMenuUIHandler : MonoBehaviour
 {
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TextMeshProUGUI highScoreText;
+    [SerializeField] private GameObject menuScreen;
+    [SerializeField] private GameObject settingsScreen;
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private TextMeshProUGUI musicVolumeText;
 
     private string playerName;
 
     private void Start()
     {
-        highScoreText.text = "Current High Score: " + DataManager.INSTANCE.highScore;    
+        highScoreText.text = "Current High Score: " + DataManager.INSTANCE.highScore;
+        musicSlider.onValueChanged.AddListener(delegate { SetMusicLevel(); });
+        inputField.onValueChanged.AddListener(delegate { SetPlayerName(); });
+        musicSlider.value = DataManager.INSTANCE.musicVolume;
     }
 
     public void LoadMainScene()
@@ -25,14 +30,33 @@ public class MainMenuUIHandler : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    public string GetPlayerName()
+    public void SwitchToSettingsScreen()
     {
-        playerName = inputField.text;
-        return playerName;
+        menuScreen.SetActive(false);
+        settingsScreen.SetActive(true);
+    }
+
+    public void SwitchToMenuScreen()
+    {
+        settingsScreen.SetActive(false);
+        menuScreen.SetActive(true);
+    }
+
+    public void SetPlayerName()
+    {
+        DataManager.INSTANCE.playerName = inputField.text;
+    }
+
+    public void SetMusicLevel()
+    {
+        DataManager.INSTANCE.musicVolume = musicSlider.value;
+        DataManager.INSTANCE.audioSource.volume = DataManager.INSTANCE.musicVolume / 100f;
+        musicVolumeText.text = DataManager.INSTANCE.musicVolume + "%";
     }
 
     public void QuitGame()
     {
+        DataManager.INSTANCE.SaveData();
 #if UNITY_EDITOR
         EditorApplication.ExitPlaymode();
 #else   
