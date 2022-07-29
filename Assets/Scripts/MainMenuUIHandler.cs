@@ -20,6 +20,8 @@ public class MainMenuUIHandler : MonoBehaviour // Class for handling UI elements
     {
         highScoreText.text = "Current High Score: " + DataManager.INSTANCE.highScore;
         musicSlider.value = DataManager.INSTANCE.musicVolume; // Putting slider in correct position
+        DataManager.INSTANCE.audioSource.volume = DataManager.INSTANCE.musicVolume / 100f;
+        musicVolumeText.text = DataManager.INSTANCE.musicVolume + "%";
         inputField.text = DataManager.INSTANCE.playerName; // Pre-writing player name in the box
         musicSlider.onValueChanged.AddListener(delegate { SetMusicLevel(); });
         inputField.onValueChanged.AddListener(delegate { SetPlayerName(); });
